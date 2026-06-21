@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Dijkstra_Algorithm {
     // Main variable for the class
@@ -65,8 +66,7 @@ public class Dijkstra_Algorithm {
     //Used to process all the neighbours of the passed node
     private void e_Neighbour(int u) {
 
-        int edgeDistance = -1;
-        int newDistance = -1;
+        int edgeDistance, newDistance;
 
         //create for loop to check all neighbours of v
         for (int i = 0; i <adj.get(u).size(); i++) {
@@ -92,10 +92,10 @@ public class Dijkstra_Algorithm {
         int V = 12;
         int source = 0;
 
-        List<List<Node>> adj = new ArrayList<List<Node>>();
+        List<List<Node>> adj = new ArrayList<>();
 
         for (int i = 0; i < V; i++) {
-            adj.add(new ArrayList<Node>());
+            adj.add(new ArrayList<>());
         }
         // A <-> D (3.5)
         adj.get(0).add(new Node(3, 35));
@@ -153,8 +153,13 @@ public class Dijkstra_Algorithm {
         adj.get(10).add(new Node(11, 40));
         adj.get(11).add(new Node(10, 40));
 
+        //get the start time
+        long startTime = System.nanoTime();
         Dijkstra_Algorithm dij = new Dijkstra_Algorithm(V);
         dij.dijkstra(adj, source);
+
+        //get the end time
+        long endTime = System.nanoTime();
 
         // Printing the shortest path to all the nodes
         // from the source node
@@ -167,6 +172,7 @@ public class Dijkstra_Algorithm {
             System.out.println(dij.source_node + " to " + dij.destination_node + " is "
                     + dij.distance[i]);
         }
+        System.out.println("Time taken in millisecond: "+(endTime-startTime)+" ns");
     }
 }
 
