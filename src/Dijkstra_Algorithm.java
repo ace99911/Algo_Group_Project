@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Dijkstra_Algorithm {
     // Main variable for the class
@@ -8,6 +7,7 @@ public class Dijkstra_Algorithm {
     private int distance[];
     private Set<Integer> settled;
     private PriorityQueue<Node> pq;
+    private int[] parent;
 
     //number of vertices
     private int V;
@@ -19,7 +19,10 @@ public class Dijkstra_Algorithm {
         distance = new int[V];
         settled = new HashSet<Integer>();
         pq = new PriorityQueue<Node>(V, new Node());
-
+        parent = new int[V];
+        for (int i = 0; i < V; i++) {
+            parent[i] = -1;
+        }
     }
 
     //Dijkstra algo
@@ -80,6 +83,7 @@ public class Dijkstra_Algorithm {
                 // check if new distance is cheaper in cost
                 if (newDistance < distance[v.node]) {
                     distance[v.node] = newDistance;
+                    parent[v.node] = u;
                 }
                 pq.add(new Node(v.node, distance[v.node]));
             }
@@ -87,11 +91,35 @@ public class Dijkstra_Algorithm {
 
     }
 
+    public List<Integer> getPath(int destination) {
+        List<Integer> path = new ArrayList<>();
+
+        if (distance[destination] == -1) {
+            return path;
+        }
+
+        for (int current = destination; current != -1; current = parent[current]) {
+            path.add(current);
+        }
+
+        Collections.reverse(path);
+        return path;
+    }
+
+
     //create main method
     public static void main(String[] args) {
         int V = 12;
         int source = 0;
 
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter the Starting zone number(A = 0, B = 1, C = 2): ");
+        source = sc.nextInt();
+        if (source >2){
+            System.out.println("Invalid Input");
+            System.exit(0);
+        }
+        int y = source+65;
         List<List<Node>> adj = new ArrayList<>();
 
         for (int i = 0; i < V; i++) {
@@ -160,18 +188,51 @@ public class Dijkstra_Algorithm {
 
         //get the end time
         long endTime = System.nanoTime();
+        int H = 7;
+        int L = 11;
 
+        int destination;
+
+        if (dij.distance[H] == -1) {
+            destination = L;
+        }
+        else if (dij.distance[L] == -1) {
+            destination = H;
+        }
+        else {
+            destination = (dij.distance[H] < dij.distance[L]) ? H : L;
+        }
         // Printing the shortest path to all the nodes
         // from the source node
-        System.out.println("The shorted path from node :");
+        System.out.println("The shortest path from node :");
+        float shortest_path = dij.distance[destination];
 
         for (int i = 0; i < dij.distance.length; i++) {
-            int j = i+65;
-            dij.source_node = (char) 65;
-            dij.destination_node = (char) j;
+            int x = i+65;
+            dij.source_node = (char) y;
+            dij.destination_node = (char) x;
             System.out.println(dij.source_node + " to " + dij.destination_node + " is "
                     + dij.distance[i]);
         }
+        System.out.println("Closest destination: "
+                + (char)(destination + 'A'));
+
+        System.out.println("Distance: "
+                + (shortest_path/10) + " km");
+
+        List<Integer> path = dij.getPath(destination);
+
+        System.out.print("Path: ");
+
+        for (int i = 0; i < path.size(); i++) {
+            System.out.print((char)(path.get(i)+'A'));
+
+            if (i < path.size() - 1) {
+                System.out.print(" -> ");
+            }
+        }
+
+        System.out.println();
         System.out.println("Time taken in millisecond: "+(endTime-startTime)+" ns");
     }
 }
